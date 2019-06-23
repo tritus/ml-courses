@@ -18,8 +18,8 @@ class Perceptron():
     return any_wrong_label == False
 
   def optimal_theta(self):
-    theta = [-3,3]#np.zeros(self.test_set[0].shape)
-    theta0 = -3#0
+    theta = np.zeros(self.test_set[0][0].shape)
+    theta0 = 0
     while (self.all_good(theta, theta0) == False):
       for i in range(len(self.test_set)):
         test_data = self.test_set[i]
@@ -33,11 +33,14 @@ class Perceptron():
 
 
 test_set = [
-  np.array([np.array([-4, 2]), np.array(+1)]),
-  np.array([np.array([-2, 1]), np.array(+1)]),
-  np.array([np.array([-1, -1]), np.array(-1)]),
-  np.array([np.array([2, 2]), np.array(-1)]),
-  np.array([np.array([1, -2]), np.array(-1)])
+  np.array([np.array([0,0,0]), np.array(+1)]),
+  np.array([np.array([0,0,1]), np.array(-1)]),
+  np.array([np.array([0,1,0]), np.array(-1)]),
+  np.array([np.array([0,1,1]), np.array(-1)]),
+  np.array([np.array([1,0,0]), np.array(-1)]),
+  np.array([np.array([1,0,1]), np.array(-1)]),
+  np.array([np.array([1,1,0]), np.array(-1)]),
+  np.array([np.array([1,1,1]), np.array(-1)])
 ]
 
 perceptron = Perceptron(test_set)
