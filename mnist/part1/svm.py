@@ -34,9 +34,15 @@ def multi_class_svm(train_x, train_y, test_x):
     Returns:
         pred_test_y - (m,) NumPy array containing the labels (int) for each test data point
     """
-    raise NotImplementedError
+    model = LinearSVC(random_state = 0, C=0.1, multi_class='ovr')
+    model.fit(train_x, train_y)
+    return model.predict(test_x)
 #pragma: coderesponse end
 
 
 def compute_test_error_svm(test_y, pred_test_y):
-    raise NotImplementedError
+    error = 0
+    for i in range(test_y.shape[0]):
+        if (test_y[i] != pred_test_y[i]):
+            error += 1
+    return error / test_y.shape[0]
