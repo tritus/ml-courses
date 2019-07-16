@@ -32,8 +32,13 @@ def compute_probabilities(X, theta, temp_parameter):
     Returns:
         H - (k, n) NumPy array, where each entry H[j][i] is the probability that X[i] is labeled as j
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    V = np.matmul(theta, X.transpose()) / temp_parameter
+    mxim = np.array([V.max(axis=0)])
+    Mxim = np.matmul(np.ones((V.shape[0], 1)), mxim)
+    p = np.exp(V - Mxim)
+    psum = np.array([p.sum(axis=0)])
+    Psum = np.matmul(np.ones((p.shape[0], 1)), psum)
+    return p / Psum
 #pragma: coderesponse end
 
 #pragma: coderesponse template
@@ -53,8 +58,15 @@ def compute_cost_function(X, Y, theta, lambda_factor, temp_parameter):
     Returns
         c - the cost value (scalar)
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    k = theta.shape[0]
+    n = X.shape[0]
+    idents = np.eye(k)[Y,:].transpose()
+    err = idents*np.log(compute_probabilities(X, theta, temp_parameter))
+    err_sum = err.sum()
+    reg = theta**2
+    reg_sum = reg.sum()
+    return -1/n*err_sum+lambda_factor/2*reg_sum
+
 #pragma: coderesponse end
 
 #pragma: coderesponse template
@@ -75,8 +87,15 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
     Returns:
         theta - (k, d) NumPy array that is the final value of parameters theta
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    P = sparse.coo_matrix(compute_probabilities(X, theta, temp_parameter))
+    n = X.shape[0]
+    k = theta.shape[0]
+    idents = np.eye(k)[Y,:].transpose()
+    dP = idents - P
+    #import pdb; pdb.set_trace()
+    dJ = -1/(temp_parameter*n)*np.matmul(X.transpose(), dP.transpose()).transpose()+lambda_factor*theta
+    output_theta = theta - alpha * dJ
+    return np.asarray(output_theta)
 #pragma: coderesponse end
 
 #pragma: coderesponse template
@@ -97,8 +116,7 @@ def update_y(train_y, test_y):
         test_y_mod3 - (n, ) NumPy array containing the new labels (a number between 0-2)
                     for each datapoint in the test set
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    return (train_y%3, test_y%3)
 #pragma: coderesponse end
 
 #pragma: coderesponse template
@@ -117,8 +135,10 @@ def compute_test_error_mod3(X, Y, theta, temp_parameter):
     Returns:
         test_error - the error rate of the classifier (scalar)
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    predicted = get_classification(X, theta, temp_parameter)
+    diff = (Y%3 - predicted%3)
+    Diff = np.nan_to_num(diff / diff)
+    return Diff.sum()/Diff.shape[0]
 #pragma: coderesponse end
 
 def softmax_regression(X, Y, temp_parameter, alpha, lambda_factor, k, num_iterations):
