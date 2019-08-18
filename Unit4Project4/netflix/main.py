@@ -27,8 +27,17 @@ def test_seeds(K):
 	print("K=" + str(K) + " seed=3 : cost=" + str(cost3))
 	print("K=" + str(K) + " seed=4 : cost=" + str(cost4))
 
+
+# K mean initialization
+
 test_seeds(1)
 test_seeds(2)
 test_seeds(3)
 test_seeds(4)
+
+# EM algo
+
+mixture, post = common.init(X,3,0)
+naive_em_loglikelihood = naive_em.run(X,mixture,post)[2]
+println("naive EM log likelihood : " + str(naive_em_loglikelihood))
 
