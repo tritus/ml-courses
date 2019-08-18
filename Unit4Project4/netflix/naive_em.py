@@ -60,7 +60,25 @@ def mstep(X: np.ndarray, post: np.ndarray) -> GaussianMixture:
     Returns:
         GaussianMixture: the new gaussian mixture
     """
-    raise NotImplementedError
+    shaped_X = X.reshape((X.shape[0],1,X.shape[1])).repeat(post.shape[1],axis=1)
+    shaped_post = post.reshape((post.shape[0],post.shape[1],1))
+
+    ponderated_points = shaped_X*shaped_post
+    full_sum = ponderated_points.sum(axis=0)
+    weights_sum = shaped_post.sum(axis=0)
+
+    mu = full_sum / weights_sum
+
+    shaped_mu = mu.reshape((1,mu.shape[0],mu.shape[1])).repeat(X.shape[0],axis=0)
+    diffs = shaped_X - shaped_mu
+    sq_diffs = (diffs*diffs).sum(axis=2,keepdims=True)
+    var_not_normalized = (sq_diffs*shaped_post).sum(axis=0)
+
+    var = (var_not_normalized / (X.shape[1]*weights_sum)).reshape((var_not_normalized.shape[0]))
+
+    pond = post.sum(axis=0) / post.shape[0]
+
+    return GaussianMixture(mu, var, pond)
 
 
 def run(X: np.ndarray, mixture: GaussianMixture,
@@ -81,6 +99,7 @@ def run(X: np.ndarray, mixture: GaussianMixture,
     current_likelihood = None
     previous_likelihood = None
     while previous_likelihood == None or previous_likelihood - current_likelihood < current_likelihood * 10**(-6):
+        previous_likelihood = current_likelihood
         post, current_likelihood = estep(X,mixture)
         mixture = mstep(X,post)
     return mixture, post, current_likelihood
