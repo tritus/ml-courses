@@ -27,6 +27,18 @@ def test_seeds(K):
 	print("K=" + str(K) + " seed=3 : cost=" + str(cost3))
 	print("K=" + str(K) + " seed=4 : cost=" + str(cost4))
 
+	naive_em_estimate0 = naive_em.run(X,mixture0,post0)
+	naive_em_estimate1 = naive_em.run(X,mixture1,post1)
+	naive_em_estimate2 = naive_em.run(X,mixture2,post2)
+	naive_em_estimate3 = naive_em.run(X,mixture3,post3)
+	naive_em_estimate4 = naive_em.run(X,mixture4,post4)
+
+	print("K=" + str(K) + " seed=0 : likelihood=" + str(naive_em_estimate0[2]))
+	print("K=" + str(K) + " seed=1 : likelihood=" + str(naive_em_estimate1[2]))
+	print("K=" + str(K) + " seed=2 : likelihood=" + str(naive_em_estimate2[2]))
+	print("K=" + str(K) + " seed=3 : likelihood=" + str(naive_em_estimate3[2]))
+	print("K=" + str(K) + " seed=4 : likelihood=" + str(naive_em_estimate4[2]))
+
 
 # K mean initialization
 
@@ -36,8 +48,32 @@ test_seeds(3)
 test_seeds(4)
 
 # EM algo
-
+print("############## EM Algorythme implemented ###############")
 mixture, post = common.init(X,3,0)
-naive_em_loglikelihood = naive_em.run(X,mixture,post)[2]
-println("naive EM log likelihood : " + str(naive_em_loglikelihood))
+naive_em_estimate = naive_em.run(X,mixture,post)[2]
+print("naive EM log likelihood : " + str(naive_em_estimate))
 
+print("############## Some Tests ######################")
+initialMixture, initialPost = common.init(X,1,0)
+mixtureK, postK, distorision = kmeans.run(X,initialMixture,initialPost)
+mixtureEM, postEM, ll = naive_em.run(X,initialMixture,initialPost)
+common.plot(X,mixtureK, postK, "Kmean")
+common.plot(X,mixtureEM, postEM, "EM Algo")
+
+initialMixture, initialPost = common.init(X,2,0)
+mixtureK, postK, distorision = kmeans.run(X,initialMixture,initialPost)
+mixtureEM, postEM, ll = naive_em.run(X,initialMixture,initialPost)
+common.plot(X,mixtureK, postK, "Kmean")
+common.plot(X,mixtureEM, postEM, "EM Algo")
+
+initialMixture, initialPost = common.init(X,3,0)
+mixtureK, postK, distorision = kmeans.run(X,initialMixture,initialPost)
+mixtureEM, postEM, ll = naive_em.run(X,initialMixture,initialPost)
+common.plot(X,mixtureK, postK, "Kmean")
+common.plot(X,mixtureEM, postEM, "EM Algo")
+
+initialMixture, initialPost = common.init(X,4,0)
+mixtureK, postK, distorision = kmeans.run(X,initialMixture,initialPost)
+mixtureEM, postEM, ll = naive_em.run(X,initialMixture,initialPost)
+common.plot(X,mixtureK, postK, "Kmean")
+common.plot(X,mixtureEM, postEM, "EM Algo")
