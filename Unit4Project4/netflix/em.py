@@ -18,7 +18,18 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> Tuple[np.ndarray, float]:
         float: log-likelihood of the assignment
 
     """
-    raise NotImplementedError
+    shaped_X = X.reshape((X.shape[0],1,X.shape[1])).repeat(mixture.mu.shape[0],axis=1)
+    shaped_mu = mixture.mu.reshape((1,mixture.mu.shape[0],mixture.mu.shape[1])).repeat(X.shape[0],axis=0)
+    shaped_var = mixture.var.reshape((1,mixture.var.shape[0],1)).repeat(X.shape[0],axis=0)
+    shaped_p = mixture.p.reshape((1,mixture.var.shape[0],1)).repeat(X.shape[0],axis=0)
+
+    shaped_var_extended = shaped_var.repeat(X.shape[1],axis=2)
+    log_N_X = -1/2*np.log(2*np.pi*shaped_var_extended)-(shaped_X-shaped_mu)**2*np.reciprocal(2*shaped_var_extended)
+    log_N_X_clean = np.where(shaped_X == 0, shaped_X, log_N_X).sum(axis=2,keepdims=True)
+    f = np.log(shaped_p) + log_N_X_clean.sum(axis=2,keepdims=True)
+
+
+    import pdb;pdb.set_trace()
 
 
 
@@ -55,7 +66,13 @@ def run(X: np.ndarray, mixture: GaussianMixture,
             for all components for all examples
         float: log-likelihood of the current assignment
     """
-    raise NotImplementedError
+    current_likelihood = None
+    previous_likelihood = None
+    while previous_likelihood == None or previous_likelihood - current_likelihood < current_likelihood * 10**(-6):
+        previous_likelihood = current_likelihood
+        post, current_likelihood = estep(X,mixture)
+        mixture = mstep(X,post)
+    return mixture, post, current_likelihood
 
 
 def fill_matrix(X: np.ndarray, mixture: GaussianMixture) -> np.ndarray:

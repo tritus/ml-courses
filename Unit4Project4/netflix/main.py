@@ -70,3 +70,7 @@ print("BIC K1 : " + str(common.bic(X, mixtureEM1, ll1)))
 print("BIC K2 : " + str(common.bic(X, mixtureEM2, ll2)))
 print("BIC K3 : " + str(common.bic(X, mixtureEM3, ll3)))
 print("BIC K4 : " + str(common.bic(X, mixtureEM4, ll4)))
+
+X_incomplete = np.loadtxt("test_incomplete.txt")
+initialMixture, initialPost = common.init(X_incomplete,4,0)
+mixtureEM4, postEM4, ll4 = em.run(X_incomplete,initialMixture,initialPost)
