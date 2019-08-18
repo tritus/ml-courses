@@ -27,7 +27,9 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> Tuple[np.ndarray, float]:
     log_N_X = -1/2*np.log(2*np.pi*shaped_var_extended)-(shaped_X-shaped_mu)**2*np.reciprocal(2*shaped_var_extended)
     log_N_X_clean = np.where(shaped_X == 0, shaped_X, log_N_X).sum(axis=2,keepdims=True)
     f = np.log(shaped_p) + log_N_X_clean.sum(axis=2,keepdims=True)
+    log_post = f-logsumexp(f,axis=1,keepdims=True).repeat(f.shape[1],axis=1)
 
+    post = np.exp(log_post.reshape((log_post.shape[0],log_post.shape[1])))
 
     import pdb;pdb.set_trace()
 
