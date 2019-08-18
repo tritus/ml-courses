@@ -30,8 +30,9 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> Tuple[np.ndarray, float]:
     log_post = f-logsumexp(f,axis=1,keepdims=True).repeat(f.shape[1],axis=1)
 
     post = np.exp(log_post.reshape((log_post.shape[0],log_post.shape[1])))
+    ll = (log_post + np.log(shaped_p)).sum() ## WRONG
 
-    import pdb;pdb.set_trace()
+    return post, ll
 
 
 
